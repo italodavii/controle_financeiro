@@ -4,6 +4,8 @@ API REST + interface web para registrar entradas e saídas e acompanhar o saldo 
 
 Desafio técnico — Estágio em Desenvolvimento (HSP Software).
 
+Feito por Ítalo David Lima Da Silva.
+
 ---
 
 ## Stack
