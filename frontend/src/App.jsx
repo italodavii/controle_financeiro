@@ -14,6 +14,25 @@ export default function App() {
   const { transacoes, resumo, carregando, erro, recarregar } = useTransacoes(mes)
   const [erroExclusao, setErroExclusao] = useState(null)
 
+  // Toda troca de mes passa por aqui, para o erro de exclusao do mes
+  // anterior nao ficar pendurado na tela do mes novo.
+  function trocarMes(novoMes) {
+    setMes(novoMes)
+    setErroExclusao(null)
+  }
+
+  // A transacao pode ter sido cadastrada com data de outro mes. Nesse
+  // caso, em vez de ela sumir da tela, navegamos para o mes dela.
+  function aoCriar(transacao) {
+    const mesDaTransacao = transacao.data.slice(0, 7)
+
+    if (mesDaTransacao !== mes) {
+      trocarMes(mesDaTransacao)
+    } else {
+      recarregar()
+    }
+  }
+
   async function removerTransacao(id) {
     setErroExclusao(null)
     try {
@@ -30,7 +49,7 @@ export default function App() {
         <h1>Controle Financeiro</h1>
       </header>
 
-      <SeletorMes mes={mes} onChange={setMes} />
+      <SeletorMes mes={mes} onChange={trocarMes} />
 
       {carregando && (
         <div className="estado estado--carregando">
@@ -53,7 +72,7 @@ export default function App() {
         <>
           <CardsResumo resumo={resumo} />
 
-          <FormTransacao onCriada={recarregar} />
+          <FormTransacao mes={mes} onCriada={aoCriar} />
 
           {erroExclusao && <p className="form__erro">{erroExclusao}</p>}
 

@@ -19,16 +19,20 @@ const CATEGORIAS = {
   ],
 }
 
-const VAZIO = {
-  descricao: '',
-  valor: '',
-  tipo: 'SAIDA',
-  categoria: 'ALIMENTACAO',
-  data: '',
+// A data ja comeca no mes que esta sendo visualizado, para o
+// cadastro cair no mes da tela em vez de exigir digitacao.
+function formularioVazio(mes) {
+  return {
+    descricao: '',
+    valor: '',
+    tipo: 'SAIDA',
+    categoria: 'ALIMENTACAO',
+    data: `${mes}-01`,
+  }
 }
 
-export default function FormTransacao({ onCriada }) {
-  const [dados, setDados] = useState(VAZIO)
+export default function FormTransacao({ mes, onCriada }) {
+  const [dados, setDados] = useState(() => formularioVazio(mes))
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState(null)
 
@@ -54,9 +58,9 @@ export default function FormTransacao({ onCriada }) {
     setErro(null)
 
     try {
-      await criar({ ...dados, valor: Number(dados.valor) })
-      setDados(VAZIO)
-      onCriada()
+      const criada = await criar({ ...dados, valor: Number(dados.valor) })
+      setDados(formularioVazio(mes))
+      onCriada(criada)
     } catch (problema) {
       setErro(problema.message)
     } finally {
