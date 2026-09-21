@@ -4,13 +4,14 @@ API REST + interface web para registrar entradas e saídas e acompanhar o saldo 
 
 Desafio técnico — Estágio em Desenvolvimento (HSP Software).
 
-Feito por Ítalo David Lima Da Silva.
+Feito por Ítalo David Lima da Silva.
 
 ---
 
 ## Stack
 
 **Backend** — Java 21, Spring Boot 4.1.1, Spring Data JPA, Bean Validation, H2 (arquivo), Maven
+
 **Frontend** — React 19, Vite, CSS puro (sem bibliotecas de UI ou de requisição)
 
 ## Estrutura
@@ -244,3 +245,34 @@ metade.
 - **Empacotamento em JAR único.** Seria possível embutir o build do front em
   `resources/static` e entregar um `java -jar`, mas não é avaliado e adicionava
   risco perto do prazo.
+
+---
+
+## Uso de IA no desenvolvimento
+
+Utilizei o Claude Cowork para o planejamento, levantamento de ideias e definição da arquitetura. 
+Também utilizei Claude Code CLI para auxiliar no desenvolvimento ágil e correções de códigos.
+
+Por ter utilizado cowork e ter dado acesso à pasta do projeto em meu drive, a plataforma 
+desabilita o compartilhamento da sessão por link, como precaução contra vazamento de dados locais.
+
+### Decisão de arquitetura
+
+De imediato o modelo me sugeriu utilizar **Thymeleaf + HTMX** com o argumento de que seria de 
+baixo risco e de rápido desenvolvimento. Decidi recusar essa sugestão, e seguir com uma estrutura 
+dividida em **API REST e React/Vite**, onde tenho mais afinidade e domínio, com alguns outros projetos 
+executados nessa arquitetura.
+
+### Erro na sugestão
+
+Durante o tratamento de exceções, foi sugerido adicionar um `@ExceptionHandler(Exception.class)` 
+como rede de segurança. Aceitei. O resultado foi uma regressão silenciosa: como `Exception` é superclasse de tudo, 
+esse handler passou a interceptar exceções que o Spring já tratava internamente com `400 Bad Request`, convertendo-as em `500`.
+
+A regressão foi pega pelo `testar-api.ps1`, bateria de requisições que eu vinha rodando a cada alteração relevante.
+
+### Como revisei
+
+O critério foi: só entra no projeto código que eu conseguiria entender, explicar e reescrever sozinho. 
+Onde a explicação não ficava clara, eu reescrevia ou pedia o raciocínio detalhado antes de aceitar. 
+Todos os commits foram feitos manualmente por mim, um por fase concluída.
